@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>建筑项目财务分析仪表板 - 2026年1月</title>
+    <title>建筑项目财务分析 - Sam Z Construction</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark: #1a1a2e;
-            --primary-mid: #16213e;
-            --primary-light: #0f4c75;
-            --accent-blue: #3282b8;
-            --success-green: #2ecc71;
-            --danger-red: #e74c3c;
-            --text-light: #ecf0f1;
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f4c75;
+            --accent: #3282b8;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
             --card-bg: rgba(22, 33, 62, 0.6);
-            --card-hover: rgba(50, 130, 184, 0.1);
+            --card-border: rgba(50, 130, 184, 0.3);
         }
 
         * {
@@ -28,24 +29,10 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-mid) 50%, var(--primary-light) 100%);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
             min-height: 100vh;
-            color: var(--text-light);
             padding: 20px;
-        }
-
-        .animated-header {
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--success-green), var(--accent-blue));
-            background-size: 200% 100%;
-            animation: gradientShift 3s ease infinite;
-            margin-bottom: 30px;
-            border-radius: 2px;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
         }
 
         .container {
@@ -53,12 +40,42 @@
             margin: 0 auto;
         }
 
-        h1 {
+        .header {
             text-align: center;
-            margin-bottom: 30px;
-            font-weight: 600;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--success), var(--accent));
+            animation: shimmer 3s infinite;
+            border-radius: 2px;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
         }
 
         .summary-cards {
@@ -71,63 +88,88 @@
         .summary-card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
             border-radius: 16px;
             padding: 25px;
-            border: 1px solid rgba(50, 130, 184, 0.2);
             transition: all 0.3s ease;
         }
 
         .summary-card:hover {
             transform: translateY(-5px);
-            border-color: var(--accent-blue);
+            border-color: var(--accent);
             box-shadow: 0 10px 30px rgba(50, 130, 184, 0.3);
         }
 
         .summary-card h3 {
-            font-size: 0.9em;
-            font-weight: 400;
-            margin-bottom: 10px;
-            opacity: 0.8;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .summary-card .value {
+        .summary-card .amount {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 2em;
+            font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
-        .green { color: var(--success-green); }
-        .red { color: var(--danger-red); }
-        .blue { color: var(--accent-blue); }
+        .summary-card.income .amount {
+            color: var(--success);
+        }
+
+        .summary-card.expense .amount {
+            color: var(--danger);
+        }
+
+        .summary-card.positive .amount {
+            color: var(--success);
+        }
+
+        .summary-card.negative .amount {
+            color: var(--danger);
+        }
+
+        .summary-card.neutral .amount {
+            color: var(--accent);
+        }
 
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 30px;
-            border-bottom: 2px solid rgba(50, 130, 184, 0.3);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 10px;
         }
 
         .tab {
-            padding: 15px 30px;
+            flex: 1;
+            padding: 15px 25px;
             background: transparent;
             border: none;
-            color: var(--text-light);
+            color: var(--text-secondary);
             font-family: 'Poppins', sans-serif;
-            font-size: 1em;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
+            border-radius: 12px;
             transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            opacity: 0.6;
         }
 
         .tab:hover {
-            opacity: 0.8;
+            background: rgba(50, 130, 184, 0.2);
+            color: var(--text-primary);
         }
 
         .tab.active {
-            opacity: 1;
-            border-bottom-color: var(--accent-blue);
+            background: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(50, 130, 184, 0.4);
         }
 
         .tab-content {
@@ -140,8 +182,14 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .projects-grid {
@@ -153,75 +201,88 @@
         .project-card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
             border-radius: 16px;
             padding: 25px;
-            border: 1px solid rgba(50, 130, 184, 0.2);
             transition: all 0.3s ease;
         }
 
         .project-card:hover {
             transform: translateY(-5px);
-            border-color: var(--accent-blue);
+            border-color: var(--accent);
             box-shadow: 0 10px 30px rgba(50, 130, 184, 0.3);
         }
 
         .project-header {
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid rgba(50, 130, 184, 0.2);
+            border-bottom: 1px solid var(--card-border);
         }
 
         .project-code {
-            font-size: 0.85em;
-            opacity: 0.7;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
             margin-bottom: 5px;
         }
 
         .project-name {
-            font-size: 1.2em;
+            font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 10px;
         }
 
-        .net-balance {
+        .project-balance {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1.5em;
+            font-size: 1.8rem;
             font-weight: 600;
+            margin-top: 10px;
         }
 
-        .stats-row {
+        .project-balance.positive {
+            color: var(--success);
+        }
+
+        .project-balance.negative {
+            color: var(--danger);
+        }
+
+        .project-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-top: 20px;
         }
 
-        .stat-item {
+        .stat {
             text-align: center;
         }
 
         .stat-label {
-            font-size: 0.75em;
-            opacity: 0.7;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
             margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-value {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1em;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
         .category-section {
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
-        .section-title {
-            font-size: 0.9em;
+        .category-title {
+            font-size: 0.9rem;
             font-weight: 600;
+            color: var(--text-secondary);
             margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(50, 130, 184, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .category-item {
@@ -231,17 +292,27 @@
         .category-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 8px;
-            font-size: 0.85em;
         }
 
         .category-name {
+            font-size: 0.9rem;
             font-weight: 500;
         }
 
         .category-amount {
             font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
             font-weight: 600;
+        }
+
+        .category-amount.income {
+            color: var(--success);
+        }
+
+        .category-amount.expense {
+            color: var(--danger);
         }
 
         .progress-bar {
@@ -254,37 +325,103 @@
         .progress-fill {
             height: 100%;
             border-radius: 4px;
-            transition: width 0.6s ease;
+            transition: width 1s ease;
         }
 
-        .progress-fill.green {
-            background: linear-gradient(90deg, var(--success-green), #27ae60);
+        .progress-fill.income {
+            background: linear-gradient(90deg, var(--success), #27ae60);
         }
 
-        .progress-fill.red {
-            background: linear-gradient(90deg, var(--danger-red), #c0392b);
+        .progress-fill.expense {
+            background: linear-gradient(90deg, var(--danger), #c0392b);
         }
 
-        .distribution-item {
+        .category-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(50, 130, 184, 0.3);
+        }
+
+        .category-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            font-size: 0.85em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .distribution-bar {
-            flex: 1;
-            margin: 0 15px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
+        .category-info h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .category-type {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-total {
+            text-align: right;
+        }
+
+        .category-percentage {
+            font-size: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .category-percentage.income {
+            color: var(--success);
+        }
+
+        .category-percentage.expense {
+            color: var(--danger);
+        }
+
+        .project-distribution {
+            margin-top: 20px;
+        }
+
+        .distribution-item {
+            margin-bottom: 15px;
+        }
+
+        .distribution-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .distribution-project {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .distribution-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
+            .header h1 {
+                font-size: 1.8rem;
             }
 
             .summary-cards {
@@ -296,44 +433,47 @@
             }
 
             .tabs {
-                overflow-x: auto;
+                flex-direction: column;
             }
 
-            .tab {
-                padding: 12px 20px;
-                font-size: 0.9em;
+            .project-stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="animated-header"></div>
     <div class="container">
-        <h1>建筑项目财务分析仪表板</h1>
-        
-        <div class="summary-cards" id="summaryCards"></div>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab(0)">总览</button>
-            <button class="tab" onclick="switchTab(1)">按项目</button>
-            <button class="tab" onclick="switchTab(2)">按类别</button>
+        <div class="header">
+            <h1>建筑项目财务分析</h1>
+            <p>Sam Z Construction - 2026年1月财务概览</p>
         </div>
-        
-        <div class="tab-content active" id="tab-overview"></div>
-        <div class="tab-content" id="tab-projects"></div>
-        <div class="tab-content" id="tab-categories"></div>
+
+        <div class="summary-cards" id="summaryCards"></div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('overview')">总览</button>
+            <button class="tab" onclick="switchTab('byProject')">按项目</button>
+            <button class="tab" onclick="switchTab('byCategory')">按类别</button>
+        </div>
+
+        <div id="overview" class="tab-content active"></div>
+        <div id="byProject" class="tab-content"></div>
+        <div id="byCategory" class="tab-content"></div>
     </div>
 
     <script>
-        // 原始数据
+        // 数据定义
         const incomeData = [
             { date: '01/01/26', category: 'Fund', project: '00 - Indirect (Overhead)', amount: 10760.55, description: 'Last Year Remain', trade: '91 - Others' },
             { date: '01/06/26', category: 'Fund', project: '02 - 21 Allen Street, Somerville, MA', amount: 25000.00, description: '21 Allen engineering (with total 40000)', trade: '91 - Others' },
             { date: '01/06/26', category: 'Fund', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 15000.00, description: '35 Jefferson brick wall and framing labor(with total 40000)', trade: '91 - Others' },
             { date: '01/08/26', category: 'Fund', project: '01 - 121 Prospect Street, Somerville, MA', amount: 50000.00, description: 'Kitchen Casework second payment', trade: '91 - Others' },
             { date: '01/12/26', category: 'Fund', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 25000.00, description: 'Framing and Masonry fee', trade: '91 - Others' },
+            { date: '01/15/26', category: 'Fund', project: '01 - 121 Prospect Street, Somerville, MA', amount: 0, description: 'Home Depot refund for all orders', trade: '91 - Others' },
             { date: '01/16/26', category: 'Fund', project: '01 - 121 Prospect Street, Somerville, MA', amount: 10000.00, description: 'Door hardwares and bath accessories fee', trade: '91 - Others' },
-            { date: '01/22/26', category: 'Fund', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 45000.00, description: 'PLumbing, electrical, HVAC Deposit', trade: '91 - Others' }
+            { date: '01/22/26', category: 'Fund', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 45000.00, description: 'PLumbing, electrical, HVAC Deposit', trade: '91 - Others' },
+            { date: '01/26/26', category: 'Fund', project: '01 - 121 Prospect Street, Somerville, MA', amount: 30000.00, description: 'Doors and vanities', trade: '91 - Others' }
         ];
 
         const expenseData = [
@@ -392,25 +532,30 @@
             { date: '1/25/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 354.15, description: '2 kitchen sinks', trade: '91 - Others' }
         ];
 
-        // 数据处理函数
+        // 工具函数
         function formatCurrency(amount) {
             return '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        function getProjectName(projectCode) {
-            const match = projectCode.match(/^\d+\s*-\s*(.+)$/);
-            return match ? match[1] : projectCode;
+        function getProjectName(project) {
+            const parts = project.split(' - ');
+            return parts.length > 1 ? parts.slice(1).join(' - ') : project;
         }
 
+        function getProjectCode(project) {
+            const match = project.match(/^\d+/);
+            return match ? match[0] : '';
+        }
+
+        // 计算汇总数据
         function calculateSummary() {
             const totalIncome = incomeData.reduce((sum, item) => sum + item.amount, 0);
             const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0);
             const netCashFlow = totalIncome - totalExpense;
             
-            const projects = new Set([
-                ...incomeData.map(item => item.project),
-                ...expenseData.map(item => item.project)
-            ]);
+            const projects = new Set();
+            incomeData.forEach(item => projects.add(item.project));
+            expenseData.forEach(item => projects.add(item.project));
             
             return {
                 totalIncome,
@@ -420,323 +565,322 @@
             };
         }
 
-        function getProjectData() {
-            const projectMap = new Map();
+        // 按项目分组数据
+        function groupByProject() {
+            const projects = {};
             
-            // 处理收入
             incomeData.forEach(item => {
-                if (!projectMap.has(item.project)) {
-                    projectMap.set(item.project, {
-                        code: item.project,
+                if (!projects[item.project]) {
+                    projects[item.project] = {
+                        code: getProjectCode(item.project),
                         name: getProjectName(item.project),
+                        fullName: item.project,
                         income: 0,
                         expense: 0,
-                        transactions: 0,
-                        incomeByCategory: {},
-                        expenseByCategory: {}
-                    });
+                        incomeItems: [],
+                        expenseItems: [],
+                        transactions: 0
+                    };
                 }
-                const project = projectMap.get(item.project);
-                project.income += item.amount;
-                project.transactions++;
-                
-                if (!project.incomeByCategory[item.category]) {
-                    project.incomeByCategory[item.category] = 0;
-                }
-                project.incomeByCategory[item.category] += item.amount;
+                projects[item.project].income += item.amount;
+                projects[item.project].incomeItems.push(item);
+                projects[item.project].transactions++;
             });
             
-            // 处理支出
             expenseData.forEach(item => {
-                if (!projectMap.has(item.project)) {
-                    projectMap.set(item.project, {
-                        code: item.project,
+                if (!projects[item.project]) {
+                    projects[item.project] = {
+                        code: getProjectCode(item.project),
                         name: getProjectName(item.project),
+                        fullName: item.project,
                         income: 0,
                         expense: 0,
-                        transactions: 0,
-                        incomeByCategory: {},
-                        expenseByCategory: {}
-                    });
+                        incomeItems: [],
+                        expenseItems: [],
+                        transactions: 0
+                    };
                 }
-                const project = projectMap.get(item.project);
-                project.expense += item.amount;
-                project.transactions++;
-                
-                if (!project.expenseByCategory[item.category]) {
-                    project.expenseByCategory[item.category] = 0;
-                }
-                project.expenseByCategory[item.category] += item.amount;
+                projects[item.project].expense += item.amount;
+                projects[item.project].expenseItems.push(item);
+                projects[item.project].transactions++;
             });
             
-            return Array.from(projectMap.values());
+            return Object.values(projects);
         }
 
-        function getCategoryData() {
-            const categoryMap = new Map();
+        // 按类别分组数据
+        function groupByCategory() {
+            const categories = {};
             
-            // 收入类别
             incomeData.forEach(item => {
-                if (!categoryMap.has(item.category)) {
-                    categoryMap.set(item.category, {
+                if (!categories[item.category]) {
+                    categories[item.category] = {
                         name: item.category,
                         type: 'income',
                         total: 0,
-                        byProject: {}
-                    });
+                        projects: {}
+                    };
                 }
-                const category = categoryMap.get(item.category);
-                category.total += item.amount;
-                
-                if (!category.byProject[item.project]) {
-                    category.byProject[item.project] = 0;
+                categories[item.category].total += item.amount;
+                if (!categories[item.category].projects[item.project]) {
+                    categories[item.category].projects[item.project] = 0;
                 }
-                category.byProject[item.project] += item.amount;
+                categories[item.category].projects[item.project] += item.amount;
             });
             
-            // 支出类别
             expenseData.forEach(item => {
-                if (!categoryMap.has(item.category)) {
-                    categoryMap.set(item.category, {
+                if (!categories[item.category]) {
+                    categories[item.category] = {
                         name: item.category,
                         type: 'expense',
                         total: 0,
-                        byProject: {}
-                    });
+                        projects: {}
+                    };
                 }
-                const category = categoryMap.get(item.category);
-                category.total += item.amount;
-                
-                if (!category.byProject[item.project]) {
-                    category.byProject[item.project] = 0;
+                categories[item.category].total += item.amount;
+                if (!categories[item.category].projects[item.project]) {
+                    categories[item.category].projects[item.project] = 0;
                 }
-                category.byProject[item.project] += item.amount;
+                categories[item.category].projects[item.project] += item.amount;
             });
             
-            return Array.from(categoryMap.values());
+            return Object.values(categories);
         }
 
-        // 渲染函数
-        function renderSummary() {
+        // 渲染汇总卡片
+        function renderSummaryCards() {
             const summary = calculateSummary();
-            const html = `
-                <div class="summary-card">
+            const container = document.getElementById('summaryCards');
+            
+            const cashFlowClass = summary.netCashFlow > 0 ? 'positive' : summary.netCashFlow < 0 ? 'negative' : 'neutral';
+            
+            container.innerHTML = `
+                <div class="summary-card income">
                     <h3>总收入</h3>
-                    <div class="value green">${formatCurrency(summary.totalIncome)}</div>
+                    <div class="amount">${formatCurrency(summary.totalIncome)}</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Fund资金投入</p>
                 </div>
-                <div class="summary-card">
+                <div class="summary-card expense">
                     <h3>总支出</h3>
-                    <div class="value red">${formatCurrency(summary.totalExpense)}</div>
+                    <div class="amount">${formatCurrency(summary.totalExpense)}</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">所有开销</p>
                 </div>
-                <div class="summary-card">
+                <div class="summary-card ${cashFlowClass}">
                     <h3>净现金流</h3>
-                    <div class="value ${summary.netCashFlow >= 0 ? 'green' : 'red'}">${formatCurrency(summary.netCashFlow)}</div>
+                    <div class="amount">${formatCurrency(summary.netCashFlow)}</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">收入 - 支出</p>
                 </div>
-                <div class="summary-card">
-                    <h3>活跃项目数</h3>
-                    <div class="value blue">${summary.activeProjects}</div>
+                <div class="summary-card neutral">
+                    <h3>活跃项目</h3>
+                    <div class="amount">${summary.activeProjects}</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">正在进行</p>
                 </div>
             `;
-            document.getElementById('summaryCards').innerHTML = html;
         }
 
+        // 渲染总览标签页
         function renderOverview() {
-            const projects = getProjectData();
+            const projects = groupByProject();
             projects.sort((a, b) => (b.income + b.expense) - (a.income + a.expense));
             
-            const html = projects.map(project => {
-                const netBalance = project.income - project.expense;
+            const container = document.getElementById('overview');
+            container.innerHTML = '<div class="projects-grid">' + projects.map(project => {
+                const balance = project.income - project.expense;
+                const balanceClass = balance > 0 ? 'positive' : balance < 0 ? 'negative' : '';
+                
                 return `
                     <div class="project-card">
                         <div class="project-header">
-                            <div class="project-code">${project.code}</div>
+                            <div class="project-code">项目 ${project.code}</div>
                             <div class="project-name">${project.name}</div>
-                            <div class="net-balance ${netBalance >= 0 ? 'green' : 'red'}">
-                                ${formatCurrency(netBalance)}
-                            </div>
+                            <div class="project-balance ${balanceClass}">${formatCurrency(balance)}</div>
                         </div>
-                        <div class="stats-row">
-                            <div class="stat-item">
+                        <div class="project-stats">
+                            <div class="stat">
                                 <div class="stat-label">收入</div>
-                                <div class="stat-value green">${formatCurrency(project.income)}</div>
+                                <div class="stat-value" style="color: var(--success)">${formatCurrency(project.income)}</div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat">
                                 <div class="stat-label">支出</div>
-                                <div class="stat-value red">${formatCurrency(project.expense)}</div>
+                                <div class="stat-value" style="color: var(--danger)">${formatCurrency(project.expense)}</div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat">
                                 <div class="stat-label">交易笔数</div>
-                                <div class="stat-value blue">${project.transactions}</div>
+                                <div class="stat-value" style="color: var(--accent)">${project.transactions}</div>
                             </div>
                         </div>
                     </div>
                 `;
-            }).join('');
-            
-            document.getElementById('tab-overview').innerHTML = `<div class="projects-grid">${html}</div>`;
+            }).join('') + '</div>';
         }
 
-        function renderProjects() {
-            const projects = getProjectData();
+        // 渲染按项目标签页
+        function renderByProject() {
+            const projects = groupByProject();
+            projects.sort((a, b) => (b.income + b.expense) - (a.income + a.expense));
             
-            const html = projects.map(project => {
-                const netBalance = project.income - project.expense;
+            const container = document.getElementById('byProject');
+            container.innerHTML = '<div class="projects-grid">' + projects.map(project => {
+                const balance = project.income - project.expense;
+                const balanceClass = balance > 0 ? 'positive' : balance < 0 ? 'negative' : '';
                 
-                let incomeHtml = '';
-                if (Object.keys(project.incomeByCategory).length > 0) {
-                    incomeHtml = `
-                        <div class="category-section">
-                            <div class="section-title green">收入明细</div>
-                            ${Object.entries(project.incomeByCategory).map(([category, amount]) => {
-                                const percentage = (amount / project.income * 100).toFixed(1);
-                                return `
-                                    <div class="category-item">
-                                        <div class="category-header">
-                                            <span class="category-name">${category}</span>
-                                            <span class="category-amount green">${formatCurrency(amount)} (${percentage}%)</span>
-                                        </div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill green" style="width: ${percentage}%"></div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
-                }
+                // 按类别分组收入
+                const incomeByCategory = {};
+                project.incomeItems.forEach(item => {
+                    if (!incomeByCategory[item.category]) {
+                        incomeByCategory[item.category] = 0;
+                    }
+                    incomeByCategory[item.category] += item.amount;
+                });
                 
-                let expenseHtml = '';
-                if (Object.keys(project.expenseByCategory).length > 0) {
-                    expenseHtml = `
-                        <div class="category-section">
-                            <div class="section-title red">支出明细</div>
-                            ${Object.entries(project.expenseByCategory).map(([category, amount]) => {
-                                const percentage = (amount / project.expense * 100).toFixed(1);
-                                return `
-                                    <div class="category-item">
-                                        <div class="category-header">
-                                            <span class="category-name">${category}</span>
-                                            <span class="category-amount red">${formatCurrency(amount)} (${percentage}%)</span>
-                                        </div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill red" style="width: ${percentage}%"></div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
-                }
+                // 按类别分组支出
+                const expenseByCategory = {};
+                project.expenseItems.forEach(item => {
+                    if (!expenseByCategory[item.category]) {
+                        expenseByCategory[item.category] = 0;
+                    }
+                    expenseByCategory[item.category] += item.amount;
+                });
+                
+                const incomeCategories = Object.entries(incomeByCategory).map(([category, amount]) => {
+                    const percentage = project.income > 0 ? (amount / project.income * 100) : 0;
+                    return { category, amount, percentage };
+                });
+                
+                const expenseCategories = Object.entries(expenseByCategory).map(([category, amount]) => {
+                    const percentage = project.expense > 0 ? (amount / project.expense * 100) : 0;
+                    return { category, amount, percentage };
+                });
                 
                 return `
                     <div class="project-card">
                         <div class="project-header">
-                            <div class="project-code">${project.code}</div>
+                            <div class="project-code">项目 ${project.code}</div>
                             <div class="project-name">${project.name}</div>
-                            <div class="net-balance ${netBalance >= 0 ? 'green' : 'red'}">
-                                净余额: ${formatCurrency(netBalance)}
-                            </div>
+                            <div class="project-balance ${balanceClass}">${formatCurrency(balance)}</div>
                         </div>
-                        <div class="stats-row">
-                            <div class="stat-item">
+                        <div class="project-stats">
+                            <div class="stat">
                                 <div class="stat-label">总收入</div>
-                                <div class="stat-value green">${formatCurrency(project.income)}</div>
+                                <div class="stat-value" style="color: var(--success)">${formatCurrency(project.income)}</div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat">
                                 <div class="stat-label">总支出</div>
-                                <div class="stat-value red">${formatCurrency(project.expense)}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">交易笔数</div>
-                                <div class="stat-value blue">${project.transactions}</div>
+                                <div class="stat-value" style="color: var(--danger)">${formatCurrency(project.expense)}</div>
                             </div>
                         </div>
-                        ${incomeHtml}
-                        ${expenseHtml}
+                        
+                        ${incomeCategories.length > 0 ? `
+                        <div class="category-section">
+                            <div class="category-title" style="color: var(--success);">收入明细</div>
+                            ${incomeCategories.map(cat => `
+                                <div class="category-item">
+                                    <div class="category-header">
+                                        <span class="category-name">${cat.category}</span>
+                                        <span class="category-amount income">${formatCurrency(cat.amount)} (${cat.percentage.toFixed(1)}%)</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill income" style="width: ${cat.percentage}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                        
+                        ${expenseCategories.length > 0 ? `
+                        <div class="category-section">
+                            <div class="category-title" style="color: var(--danger);">支出明细</div>
+                            ${expenseCategories.map(cat => `
+                                <div class="category-item">
+                                    <div class="category-header">
+                                        <span class="category-name">${cat.category}</span>
+                                        <span class="category-amount expense">${formatCurrency(cat.amount)} (${cat.percentage.toFixed(1)}%)</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill expense" style="width: ${cat.percentage}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ` : ''}
                     </div>
                 `;
-            }).join('');
-            
-            document.getElementById('tab-projects').innerHTML = `<div class="projects-grid">${html}</div>`;
+            }).join('') + '</div>';
         }
 
-        function renderCategories() {
-            const categories = getCategoryData();
+        // 渲染按类别标签页
+        function renderByCategory() {
+            const categories = groupByCategory();
             const summary = calculateSummary();
             
-            const html = categories.map(category => {
-                const isIncome = category.type === 'income';
-                const totalBase = isIncome ? summary.totalIncome : summary.totalExpense;
-                const percentage = (category.total / totalBase * 100).toFixed(1);
+            const container = document.getElementById('byCategory');
+            container.innerHTML = categories.map(category => {
+                const total = category.type === 'income' ? summary.totalIncome : summary.totalExpense;
+                const percentage = total > 0 ? (category.total / total * 100) : 0;
                 
-                const distributionHtml = Object.entries(category.byProject).map(([project, amount]) => {
-                    const projectPercentage = (amount / category.total * 100).toFixed(1);
-                    return `
-                        <div class="distribution-item">
-                            <span>${getProjectName(project)}</span>
-                            <div class="distribution-bar">
-                                <div class="progress-fill ${isIncome ? 'green' : 'red'}" style="width: ${projectPercentage}%"></div>
-                            </div>
-                            <span class="${isIncome ? 'green' : 'red'}">${formatCurrency(amount)} (${projectPercentage}%)</span>
-                        </div>
-                    `;
-                }).join('');
+                const projectDistribution = Object.entries(category.projects).map(([project, amount]) => {
+                    const projectPercentage = category.total > 0 ? (amount / category.total * 100) : 0;
+                    return { project: getProjectName(project), amount, percentage: projectPercentage };
+                }).sort((a, b) => b.amount - a.amount);
                 
                 return `
-                    <div class="project-card">
-                        <div class="project-header">
-                            <div class="project-name">${category.name}</div>
-                            <div class="project-code">${isIncome ? '收入类别' : '支出类别'}</div>
-                            <div class="net-balance ${isIncome ? 'green' : 'red'}">
-                                ${formatCurrency(category.total)}
+                    <div class="category-card">
+                        <div class="category-card-header">
+                            <div class="category-info">
+                                <h3>${category.name}</h3>
+                                <div class="category-type">${category.type === 'income' ? '收入' : '支出'}</div>
+                            </div>
+                            <div class="category-total">
+                                <div class="category-percentage ${category.type}">${percentage.toFixed(1)}%</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 600; color: ${category.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
+                                    ${formatCurrency(category.total)}
+                                </div>
                             </div>
                         </div>
-                        <div class="category-item">
-                            <div class="category-header">
-                                <span class="category-name">占总${isIncome ? '收入' : '支出'}比例</span>
-                                <span class="category-amount ${isIncome ? 'green' : 'red'}">${percentage}%</span>
+                        
+                        <div class="project-distribution">
+                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                                项目分布
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${isIncome ? 'green' : 'red'}" style="width: ${percentage}%"></div>
-                            </div>
-                        </div>
-                        <div class="category-section">
-                            <div class="section-title">项目分布</div>
-                            ${distributionHtml}
+                            ${projectDistribution.map(dist => `
+                                <div class="distribution-item">
+                                    <div class="distribution-header">
+                                        <span class="distribution-project">${dist.project}</span>
+                                        <span class="distribution-amount">${formatCurrency(dist.amount)}</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill ${category.type}" style="width: ${dist.percentage}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
             }).join('');
-            
-            document.getElementById('tab-categories').innerHTML = `<div class="projects-grid">${html}</div>`;
         }
 
         // 标签切换
-        function switchTab(index) {
-            const tabs = document.querySelectorAll('.tab');
-            const contents = document.querySelectorAll('.tab-content');
-            
-            tabs.forEach((tab, i) => {
-                if (i === index) {
-                    tab.classList.add('active');
-                    contents[i].classList.add('active');
-                } else {
-                    tab.classList.remove('active');
-                    contents[i].classList.remove('active');
-                }
+        function switchTab(tabName) {
+            // 更新标签按钮状态
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
             });
+            event.target.classList.add('active');
+            
+            // 更新内容显示
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
         }
 
         // 初始化
-        function init() {
-            renderSummary();
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSummaryCards();
             renderOverview();
-            renderProjects();
-            renderCategories();
-        }
-
-        // 页面加载完成后初始化
-        window.addEventListener('DOMContentLoaded', init);
+            renderByProject();
+            renderByCategory();
+        });
     </script>
 </body>
 </html>
