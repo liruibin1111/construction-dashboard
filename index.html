@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建筑项目财务分析仪表板 - 2026年1月</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #1a1a2e;
+            --primary-mid: #16213e;
+            --primary-light: #0f4c75;
+            --accent-blue: #3282b8;
+            --success-green: #2ecc71;
+            --danger-red: #e74c3c;
+            --text-light: #ecf0f1;
+            --card-bg: rgba(22, 33, 62, 0.6);
+            --card-hover: rgba(50, 130, 184, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-mid) 50%, var(--primary-light) 100%);
+            min-height: 100vh;
+            color: var(--text-light);
+            padding: 20px;
+        }
+
+        .animated-header {
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--success-green), var(--accent-blue));
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+            margin-bottom: 30px;
+            border-radius: 2px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(50, 130, 184, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px rgba(50, 130, 184, 0.3);
+        }
+
+        .summary-card h3 {
+            font-size: 0.9em;
+            font-weight: 400;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .summary-card .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .green { color: var(--success-green); }
+        .red { color: var(--danger-red); }
+        .blue { color: var(--accent-blue); }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(50, 130, 184, 0.3);
+        }
+
+        .tab {
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            opacity: 0.6;
+        }
+
+        .tab:hover {
+            opacity: 0.8;
+        }
+
+        .tab.active {
+            opacity: 1;
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(50, 130, 184, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px rgba(50, 130, 184, 0.3);
+        }
+
+        .project-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(50, 130, 184, 0.2);
+        }
+
+        .project-code {
+            font-size: 0.85em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .project-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .net-balance {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .category-section {
+            margin-top: 20px;
+        }
+
+        .section-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(50, 130, 184, 0.2);
+        }
+
+        .category-item {
+            margin-bottom: 15px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+
+        .category-name {
+            font-weight: 500;
+        }
+
+        .category-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .progress-fill.green {
+            background: linear-gradient(90deg, var(--success-green), #27ae60);
+        }
+
+        .progress-fill.red {
+            background: linear-gradient(90deg, var(--danger-red), #c0392b);
+        }
+
+        .distribution-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.85em;
+        }
+
+        .distribution-bar {
+            flex: 1;
+            margin: 0 15px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-header"></div>
+    <div class="container">
+        <h1>建筑项目财务分析仪表板</h1>
+        
+        <div class="summary-cards" id="summaryCards"></div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(0)">总览</button>
+            <button class="tab" onclick="switchTab(1)">按项目</button>
+            <button class="tab" onclick="switchTab(2)">按类别</button>
+        </div>
+        
+        <div class="tab-content active" id="tab-overview"></div>
+        <div class="tab-content" id="tab-projects"></div>
+        <div class="tab-content" id="tab-categories"></div>
+    </div>
+
+    <script>
+        // 原始数据
+        const incomeData = [
+            { date: '01/01/26', category: 'Fund', project: '00 - Indirect (Overhead)', amount: 10760.55, description: 'Last Year Remain', trade: '91 - Others' },
+            { date: '01/06/26', category: 'Fund', project: '02 - 21 Allen Street, Somerville, MA', amount: 25000.00, description: '21 Allen engineering (with total 40000)', trade: '91 - Others' },
+            { date: '01/06/26', category: 'Fund', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 15000.00, description: '35 Jefferson brick wall and framing labor(with total 40000)', trade: '91 - Others' },
+            { date: '01/08/26', category: 'Fund', project: '01 - 121 Prospect Street, Somerville, MA', amount: 50000.00, description: 'Kitchen Casework second payment', trade: '91 - Others' },
+            { date: '01/12/26', category: 'Fund', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 25000.00, description: 'Framing and Masonry fee', trade: '91 - Others' },
+            { date: '01/16/26', category: 'Fund', project: '01 - 121 Prospect Street, Somerville, MA', amount: 10000.00, description: 'Door hardwares and bath accessories fee', trade: '91 - Others' },
+            { date: '01/22/26', category: 'Fund', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 45000.00, description: 'PLumbing, electrical, HVAC Deposit', trade: '91 - Others' }
+        ];
+
+        const expenseData = [
+            { date: '1/5/2026', category: 'Labor Cost', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 1000.00, description: '老李工钱(取现金)', trade: '90 - Services' },
+            { date: '1/6/2026', category: 'Labor Cost', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 800.00, description: '老李工钱(取现金)', trade: '90 - Services' },
+            { date: '1/6/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1823.12, description: '12 kitchen sinks', trade: '91 - Others' },
+            { date: '1/6/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1823.12, description: '12 kitchen sinks', trade: '91 - Others' },
+            { date: '1/6/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 41.94, description: 'Disel Fuel for Heating', trade: '91 - Others' },
+            { date: '1/7/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 125.55, description: 'Interior door lock sets sample', trade: '91 - Others' },
+            { date: '1/7/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 19.90, description: 'Coupon for material order', trade: '91 - Others' },
+            { date: '1/7/2026', category: 'Sub-contractor', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 2200.00, description: 'Deposit for brick wall cut', trade: '07 - Masonry Block' },
+            { date: '1/7/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 9.95, description: 'Coupon for material order', trade: '91 - Others' },
+            { date: '1/7/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 2353.02, description: 'Lumber for framing', trade: '51 - Framing' },
+            { date: '1/7/2026', category: 'Other', project: '02 - 21 Allen Street, Somerville, MA', amount: 9000.00, description: 'H+O engineering service', trade: '90 - Services' },
+            { date: '1/7/2026', category: 'Other', project: '00 - Indirect (Overhead)', amount: 15.00, description: 'Wire transfer fee', trade: '90 - Services' },
+            { date: '1/8/2025', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 12948.39, description: 'Floor materials', trade: '72 - FLooring' },
+            { date: '1/9/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 67.02, description: 'Lock set sample', trade: '91 - Others' },
+            { date: '1/9/2026', category: 'Sub-contractor', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 2200.00, description: 'Second payment for brick wall cut', trade: '07 - Masonry Block' },
+            { date: '1/9/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 4435.94, description: 'Steel beam materials', trade: '51 - Framing' },
+            { date: '1/9/2026', category: 'Other', project: '00 - Indirect (Overhead)', amount: 15.00, description: 'Wire transfer fee', trade: '90 - Services' },
+            { date: '1/9/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 1454.71, description: 'LvL materials', trade: '51 - Framing' },
+            { date: '1/9/2026', category: 'Other', project: '02 - 21 Allen Street, Somerville, MA', amount: 7606.00, description: 'Dewatering permit deposit', trade: '90 - Services' },
+            { date: '1/9/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 48604.36, description: 'Leon kitchen cabinet second payment', trade: '70 - Interior Finish' },
+            { date: '1/12/2026', category: 'Sub-contractor', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 2200.00, description: 'Final payment for brick wall cut', trade: '07 - Masonry Block' },
+            { date: '1/12/2026', category: 'Sub-contractor', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 4000.00, description: 'Framing first payment', trade: '51 - Framing' },
+            { date: '1/13/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 9.95, description: 'Coupon for material order', trade: '91 - Others' },
+            { date: '1/13/2026', category: 'Sub-contractor', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 1675.00, description: 'Concrete cut and build first payment', trade: '07 - Masonry Block' },
+            { date: '1/13/2026', category: 'Other', project: '00 - Indirect (Overhead)', amount: 15.00, description: 'Wire transfer fee', trade: '90 - Services' },
+            { date: '1/14/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 1434.18, description: 'Subfloor materials', trade: '51 - Framing' },
+            { date: '1/14/2026', category: 'Other', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 960.00, description: 'Dumpster', trade: '91 - Others' },
+            { date: '1/15/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1582.45, description: 'Black door hinges', trade: '70 - Interior Finish' },
+            { date: '1/15/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 1056.66, description: 'Striping and stair framing materials', trade: '51 - Framing' },
+            { date: '1/15/2026', category: 'Rental', project: '01 - 121 Prospect Street, Somerville, MA', amount: 4.85, description: 'Uhaul toll fee', trade: '90 - Services' },
+            { date: '1/16/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 278.67, description: 'Floor joist materials', trade: '51 - Framing' },
+            { date: '1/20/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 447.21, description: 'Door lock sets', trade: '70 - Interior Finish' },
+            { date: '1/20/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 230.07, description: 'Door lock sets', trade: '70 - Interior Finish' },
+            { date: '1/20/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 65.55, description: 'Disel Fuel for Heating', trade: '91 - Others' },
+            { date: '1/20/2026', category: 'Other', project: '00 - Indirect (Overhead)', amount: 15.00, description: 'Wire transfer fee', trade: '90 - Services' },
+            { date: '1/21/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 31.85, description: 'plastic painter cover', trade: '70 - Interior Finish' },
+            { date: '1/21/2026', category: 'Labor Cost', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 1000.00, description: '老李工钱(取现金)', trade: '90 - Services' },
+            { date: '1/21/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 494.33, description: 'Lumber for framing', trade: '51 - Framing' },
+            { date: '1/21/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1659.47, description: 'Door lock sets', trade: '70 - Interior Finish' },
+            { date: '1/21/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1800.30, description: '24in Vanity x4', trade: '70 - Interior Finish' },
+            { date: '1/21/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1111.41, description: 'Door lock sets', trade: '70 - Interior Finish' },
+            { date: '1/22/2026', category: 'Sub-contractor', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 4000.00, description: 'Framing second payment', trade: '51 - Framing' },
+            { date: '1/22/2026', category: 'Labor Cost', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 1000.00, description: '老李工钱(取现金)', trade: '90 - Services' },
+            { date: '1/22/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 171.49, description: 'Lumber for framing', trade: '51 - Framing' },
+            { date: '1/22/2026', category: 'Material', project: '03 - 25 Temple Street, Somerville, MA', amount: 162.33, description: 'Package materilas', trade: '91 - Others' },
+            { date: '1/22/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1507.95, description: 'Bathtub sticks', trade: '70 - Interior Finish' },
+            { date: '1/22/2026', category: 'Other', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 960.00, description: 'Dumpster', trade: '91 - Others' },
+            { date: '1/22/2026', category: 'Material', project: '04 - 35 Jefferson Rd, Brookline, MA', amount: 580.66, description: 'Lumber for framing', trade: '51 - Framing' },
+            { date: '1/22/2026', category: 'Other', project: '00 - Indirect (Overhead)', amount: 15.00, description: 'Wire transfer fee', trade: '90 - Services' },
+            { date: '1/23/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 1202.24, description: '3rd floor missing or replaced door', trade: '74 - Finishing Carpentry' },
+            { date: '1/23/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 3.00, description: '3rd floor missing or replaced door', trade: '74 - Finishing Carpentry' },
+            { date: '1/23/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 8932.95, description: '2nd floor doors', trade: '70 - Interior Finish' },
+            { date: '1/25/2026', category: 'Material', project: '01 - 121 Prospect Street, Somerville, MA', amount: 354.15, description: '2 kitchen sinks', trade: '91 - Others' }
+        ];
+
+        // 数据处理函数
+        function formatCurrency(amount) {
+            return '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getProjectName(projectCode) {
+            const match = projectCode.match(/^\d+\s*-\s*(.+)$/);
+            return match ? match[1] : projectCode;
+        }
+
+        function calculateSummary() {
+            const totalIncome = incomeData.reduce((sum, item) => sum + item.amount, 0);
+            const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0);
+            const netCashFlow = totalIncome - totalExpense;
+            
+            const projects = new Set([
+                ...incomeData.map(item => item.project),
+                ...expenseData.map(item => item.project)
+            ]);
+            
+            return {
+                totalIncome,
+                totalExpense,
+                netCashFlow,
+                activeProjects: projects.size
+            };
+        }
+
+        function getProjectData() {
+            const projectMap = new Map();
+            
+            // 处理收入
+            incomeData.forEach(item => {
+                if (!projectMap.has(item.project)) {
+                    projectMap.set(item.project, {
+                        code: item.project,
+                        name: getProjectName(item.project),
+                        income: 0,
+                        expense: 0,
+                        transactions: 0,
+                        incomeByCategory: {},
+                        expenseByCategory: {}
+                    });
+                }
+                const project = projectMap.get(item.project);
+                project.income += item.amount;
+                project.transactions++;
+                
+                if (!project.incomeByCategory[item.category]) {
+                    project.incomeByCategory[item.category] = 0;
+                }
+                project.incomeByCategory[item.category] += item.amount;
+            });
+            
+            // 处理支出
+            expenseData.forEach(item => {
+                if (!projectMap.has(item.project)) {
+                    projectMap.set(item.project, {
+                        code: item.project,
+                        name: getProjectName(item.project),
+                        income: 0,
+                        expense: 0,
+                        transactions: 0,
+                        incomeByCategory: {},
+                        expenseByCategory: {}
+                    });
+                }
+                const project = projectMap.get(item.project);
+                project.expense += item.amount;
+                project.transactions++;
+                
+                if (!project.expenseByCategory[item.category]) {
+                    project.expenseByCategory[item.category] = 0;
+                }
+                project.expenseByCategory[item.category] += item.amount;
+            });
+            
+            return Array.from(projectMap.values());
+        }
+
+        function getCategoryData() {
+            const categoryMap = new Map();
+            
+            // 收入类别
+            incomeData.forEach(item => {
+                if (!categoryMap.has(item.category)) {
+                    categoryMap.set(item.category, {
+                        name: item.category,
+                        type: 'income',
+                        total: 0,
+                        byProject: {}
+                    });
+                }
+                const category = categoryMap.get(item.category);
+                category.total += item.amount;
+                
+                if (!category.byProject[item.project]) {
+                    category.byProject[item.project] = 0;
+                }
+                category.byProject[item.project] += item.amount;
+            });
+            
+            // 支出类别
+            expenseData.forEach(item => {
+                if (!categoryMap.has(item.category)) {
+                    categoryMap.set(item.category, {
+                        name: item.category,
+                        type: 'expense',
+                        total: 0,
+                        byProject: {}
+                    });
+                }
+                const category = categoryMap.get(item.category);
+                category.total += item.amount;
+                
+                if (!category.byProject[item.project]) {
+                    category.byProject[item.project] = 0;
+                }
+                category.byProject[item.project] += item.amount;
+            });
+            
+            return Array.from(categoryMap.values());
+        }
+
+        // 渲染函数
+        function renderSummary() {
+            const summary = calculateSummary();
+            const html = `
+                <div class="summary-card">
+                    <h3>总收入</h3>
+                    <div class="value green">${formatCurrency(summary.totalIncome)}</div>
+                </div>
+                <div class="summary-card">
+                    <h3>总支出</h3>
+                    <div class="value red">${formatCurrency(summary.totalExpense)}</div>
+                </div>
+                <div class="summary-card">
+                    <h3>净现金流</h3>
+                    <div class="value ${summary.netCashFlow >= 0 ? 'green' : 'red'}">${formatCurrency(summary.netCashFlow)}</div>
+                </div>
+                <div class="summary-card">
+                    <h3>活跃项目数</h3>
+                    <div class="value blue">${summary.activeProjects}</div>
+                </div>
+            `;
+            document.getElementById('summaryCards').innerHTML = html;
+        }
+
+        function renderOverview() {
+            const projects = getProjectData();
+            projects.sort((a, b) => (b.income + b.expense) - (a.income + a.expense));
+            
+            const html = projects.map(project => {
+                const netBalance = project.income - project.expense;
+                return `
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-code">${project.code}</div>
+                            <div class="project-name">${project.name}</div>
+                            <div class="net-balance ${netBalance >= 0 ? 'green' : 'red'}">
+                                ${formatCurrency(netBalance)}
+                            </div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-label">收入</div>
+                                <div class="stat-value green">${formatCurrency(project.income)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">支出</div>
+                                <div class="stat-value red">${formatCurrency(project.expense)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">交易笔数</div>
+                                <div class="stat-value blue">${project.transactions}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('tab-overview').innerHTML = `<div class="projects-grid">${html}</div>`;
+        }
+
+        function renderProjects() {
+            const projects = getProjectData();
+            
+            const html = projects.map(project => {
+                const netBalance = project.income - project.expense;
+                
+                let incomeHtml = '';
+                if (Object.keys(project.incomeByCategory).length > 0) {
+                    incomeHtml = `
+                        <div class="category-section">
+                            <div class="section-title green">收入明细</div>
+                            ${Object.entries(project.incomeByCategory).map(([category, amount]) => {
+                                const percentage = (amount / project.income * 100).toFixed(1);
+                                return `
+                                    <div class="category-item">
+                                        <div class="category-header">
+                                            <span class="category-name">${category}</span>
+                                            <span class="category-amount green">${formatCurrency(amount)} (${percentage}%)</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill green" style="width: ${percentage}%"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                let expenseHtml = '';
+                if (Object.keys(project.expenseByCategory).length > 0) {
+                    expenseHtml = `
+                        <div class="category-section">
+                            <div class="section-title red">支出明细</div>
+                            ${Object.entries(project.expenseByCategory).map(([category, amount]) => {
+                                const percentage = (amount / project.expense * 100).toFixed(1);
+                                return `
+                                    <div class="category-item">
+                                        <div class="category-header">
+                                            <span class="category-name">${category}</span>
+                                            <span class="category-amount red">${formatCurrency(amount)} (${percentage}%)</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill red" style="width: ${percentage}%"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-code">${project.code}</div>
+                            <div class="project-name">${project.name}</div>
+                            <div class="net-balance ${netBalance >= 0 ? 'green' : 'red'}">
+                                净余额: ${formatCurrency(netBalance)}
+                            </div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-label">总收入</div>
+                                <div class="stat-value green">${formatCurrency(project.income)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">总支出</div>
+                                <div class="stat-value red">${formatCurrency(project.expense)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">交易笔数</div>
+                                <div class="stat-value blue">${project.transactions}</div>
+                            </div>
+                        </div>
+                        ${incomeHtml}
+                        ${expenseHtml}
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('tab-projects').innerHTML = `<div class="projects-grid">${html}</div>`;
+        }
+
+        function renderCategories() {
+            const categories = getCategoryData();
+            const summary = calculateSummary();
+            
+            const html = categories.map(category => {
+                const isIncome = category.type === 'income';
+                const totalBase = isIncome ? summary.totalIncome : summary.totalExpense;
+                const percentage = (category.total / totalBase * 100).toFixed(1);
+                
+                const distributionHtml = Object.entries(category.byProject).map(([project, amount]) => {
+                    const projectPercentage = (amount / category.total * 100).toFixed(1);
+                    return `
+                        <div class="distribution-item">
+                            <span>${getProjectName(project)}</span>
+                            <div class="distribution-bar">
+                                <div class="progress-fill ${isIncome ? 'green' : 'red'}" style="width: ${projectPercentage}%"></div>
+                            </div>
+                            <span class="${isIncome ? 'green' : 'red'}">${formatCurrency(amount)} (${projectPercentage}%)</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-name">${category.name}</div>
+                            <div class="project-code">${isIncome ? '收入类别' : '支出类别'}</div>
+                            <div class="net-balance ${isIncome ? 'green' : 'red'}">
+                                ${formatCurrency(category.total)}
+                            </div>
+                        </div>
+                        <div class="category-item">
+                            <div class="category-header">
+                                <span class="category-name">占总${isIncome ? '收入' : '支出'}比例</span>
+                                <span class="category-amount ${isIncome ? 'green' : 'red'}">${percentage}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${isIncome ? 'green' : 'red'}" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        <div class="category-section">
+                            <div class="section-title">项目分布</div>
+                            ${distributionHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('tab-categories').innerHTML = `<div class="projects-grid">${html}</div>`;
+        }
+
+        // 标签切换
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach((tab, i) => {
+                if (i === index) {
+                    tab.classList.add('active');
+                    contents[i].classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                    contents[i].classList.remove('active');
+                }
+            });
+        }
+
+        // 初始化
+        function init() {
+            renderSummary();
+            renderOverview();
+            renderProjects();
+            renderCategories();
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
